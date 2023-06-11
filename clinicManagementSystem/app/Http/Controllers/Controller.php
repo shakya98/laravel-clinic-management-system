@@ -7,6 +7,9 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use App\Models\Patient;
+use App\Models\Prescription;
+use App\Models\Bill;
+use App\Models\Record;
 
 
 class Controller extends BaseController
@@ -45,5 +48,41 @@ class Controller extends BaseController
     {
         $all_patients = Patient::get(['id', 'name', 'birthday', 'contact_no', 'photo', 'nic', 'notes']);
         return $all_patients;
+    }
+
+    // add record function
+
+    public function addRecord(Request $request, $id)
+    {
+        $record = $this->createRecord($request, $id);
+        $this->createPrescription($request, $record);
+        $this->createBill($request, $record , $id);
+
+        return $record;
+    }
+
+    private function createRecord(Request $request, $id)
+    {
+        return Record::create([
+            'record' => $request->input('record'),
+            'patient_id' => $id,
+        ]);
+    }
+
+    private function createPrescription(Request $request, Record $record)
+    {
+        Prescription::create([
+            'record_id' => $record->id,
+            'prescription' => $request->input('prescription'),
+        ]);
+    }
+
+    private function createBill(Request $request, Record $record, $id)
+    {
+        Prescription::create([
+            'record_id' => $record->id,
+            'patient_id' => $id,
+            'total_bill' => $request->input('total_bill'),
+        ]);
     }
 }
