@@ -85,4 +85,24 @@ class Controller extends BaseController
             'total_bill' => $request->input('total_bill'),
         ]);
     }
+
+    //getting total bill amount
+
+    public function getTotalBillAmount(Request $request)
+    {
+        // Validate the required fields
+        $validatedData = $request->validate([
+            'start_date' => 'required',
+            'end_date' => 'required',
+        ]);
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $totalBillAmount = Bill::whereBetween('created_at', [$startDate, $endDate])
+            ->sum('total_bill');
+
+        // return response()->json(['total_bill_amount' => $totalBillAmount]);
+        return response()->json($totalBillAmount);
+    }
 }
