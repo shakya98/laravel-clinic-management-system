@@ -38,4 +38,12 @@ class Controller extends BaseController
 
         return response()->json($patient_data, 201);
     }
+
+    // get all patients function
+
+    public function getPatients()
+    {
+        $all_patients = Patient::get(['id', 'name', 'birthday', 'contact_no', 'photo', 'nic', 'notes']);
+        return $all_patients;
+    }
 }
