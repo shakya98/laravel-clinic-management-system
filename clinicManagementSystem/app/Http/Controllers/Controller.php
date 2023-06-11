@@ -79,7 +79,7 @@ class Controller extends BaseController
 
     private function createBill(Request $request, Record $record, $id)
     {
-        Prescription::create([
+        Bill::create([
             'record_id' => $record->id,
             'patient_id' => $id,
             'total_bill' => $request->input('total_bill'),
