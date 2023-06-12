@@ -56,7 +56,7 @@ class Controller extends BaseController
     {
         $record = $this->createRecord($request, $id);
         $this->createPrescription($request, $record);
-        $this->createBill($request, $record , $id);
+        $this->createBill($request, $record, $id);
 
         return $record;
     }
