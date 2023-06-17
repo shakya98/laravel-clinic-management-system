@@ -99,10 +99,33 @@ $(document).ready(function () {
             type: "POST",
             url: `api/getTotalBillAmount`,
             data: data,
-            dataType: 'json',
+            dataType: "json",
             success: function (response) {
                 console.log(response);
-                $("#totalBillAmountDiv").text("Total revenue is: " + response);
+                var totalBillAmountData = response.totalBillData;
+                var totalBillSum = response.totalBillSum;
+
+                var tableHtml = '<table class="table">';
+                tableHtml +=
+                    "<tr><th>Patient Name</th><th>Record ID</th><th>Prescription ID</th><th>Total Bill</th></tr>";
+
+                for (var i = 0; i < totalBillAmountData.length; i++) {
+                    var record = totalBillAmountData[i];
+                    tableHtml += "<tr>";
+                    tableHtml += "<td>" + record.patient_name + "</td>";
+                    tableHtml += "<td>" + record.record_id + "</td>";
+                    tableHtml += "<td>" + record.prescription_id + "</td>";
+                    tableHtml += "<td>" + record.total_bill + "</td>";
+                    tableHtml += "</tr>";
+                }
+
+                tableHtml += "</table>";
+
+                $("#totalBillAmountDiv").html(tableHtml);
+
+                $("#totalBillAmountDiv").append(
+                    '<p class="my-5">Total Bill Sum: ' + totalBillSum + "</p>"
+                );
             },
             error: function (xhr, status, error) {
                 console.log(xhr.responseText);

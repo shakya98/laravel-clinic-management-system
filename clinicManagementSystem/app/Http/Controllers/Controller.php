@@ -10,6 +10,7 @@ use App\Models\Patient;
 use App\Models\Prescription;
 use App\Models\Bill;
 use App\Models\Record;
+use Illuminate\Support\Facades\DB;
 
 
 class Controller extends BaseController
@@ -99,10 +100,26 @@ class Controller extends BaseController
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $totalBillAmount = Bill::whereBetween('created_at', [$startDate, $endDate])
+        $totalBillData = DB::table('bills')
+            ->join('patients', 'bills.patient_id', '=', 'patients.id')
+            ->join('records', 'bills.record_id', '=', 'records.id')
+            ->join('prescriptions', 'records.id', '=', 'prescriptions.record_id')
+            ->whereBetween('bills.created_at', [$startDate, $endDate])
+            ->select(
+                'patients.name as patient_name',
+                'records.id as record_id',
+                'prescriptions.id as prescription_id',
+                'bills.total_bill'
+            )
+            ->get();
+
+        $totalBillSum = DB::table('bills')
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->sum('total_bill');
 
-        // return response()->json(['total_bill_amount' => $totalBillAmount]);
-        return response()->json($totalBillAmount);
+        return response()->json([
+            'totalBillData' => $totalBillData,
+            'totalBillSum' => $totalBillSum
+        ]);
     }
 }
